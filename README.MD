@@ -12,12 +12,4 @@ The script was greatly simplified, as the previous options (such as the ability 
 
 Built for Debian/Kali linux or other Linux distributions. Usable in Windows, but without the same Linux terminal capabilities. Enjoy.
 
-Ingredients:
-
-BS4
-
-Chromedriver
-
-Selenium
-
-Your own combolist
+> pip install -r requirements.txt
