@@ -32,7 +32,7 @@ def splitter(filename='netflix.txt'):
     users = []
     passwords = []
     try:
-        with open(filename, 'r') as net:
+        with open(filename, 'r', encoding='utf-8', errors='ignore') as net:
             for line in net:
                 users.append(line.split(":")[0])
                 passwords.append(line.split(":")[1].split(" ")[0])
