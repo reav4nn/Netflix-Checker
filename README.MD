@@ -1,15 +1,52 @@
-# Netflix Account Checker
-## Easy Webdriver Account Checker
-### Have a Netflix Combo-List? Name it 'netflix' and check it out.
+# Netflix Account Checker v2.0
 
-![Alt text](assets/pic.png "Netflix Checker running on Kali")
+Selenium-based Netflix combo-list checker for Linux.
 
-Checks Netflix accounts using Selenium-Webdriver, without headless mode for now.
+![Screenshot](assets/pic.png)
 
-Due to its slow speed, the checker has the ability to resume in case of a 403 error or other errors. Change your VPN and restart the program, and it will resume where it left off.
+## Features
 
-The script was greatly simplified, as the previous options (such as the ability to choose how to split your combo-list) were not considered very useful.
+- Checks Netflix accounts via Selenium WebDriver
+- Auto-resume on 403 / rate-limit errors
+- Stores valid accounts in `valid.txt`
+- IP & country detection on startup
 
-Built for Debian/Kali linux or other Linux distributions. Usable in Windows, but without the same Linux terminal capabilities. Enjoy.
+## Requirements
 
-> pip install -r requirements.txt
+- Python 3.7+
+- Google Chrome / Chromium
+- ChromeDriver (matching your Chrome version)
+
+## Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+1. Create a file named `netflix.txt` in the project root with combos in `email:password` format (one per line)
+2. Run the checker:
+
+```bash
+python3 netflix.py
+```
+
+3. Valid accounts are saved to `valid.txt`
+
+## Resume
+
+If the checker is interrupted (403 error, rate limit, etc.), remaining combos are saved to `resume.txt`. On next run, the checker automatically detects and resumes from that file.
+
+## Project Structure
+
+```
+netflix.py        # Main checker logic
+countries.py      # IP & geolocation lookup
+header.py         # Terminal UI (title, menu)
+requirements.txt  # Python dependencies
+```
+
+## License
+
+For educational purposes only.
