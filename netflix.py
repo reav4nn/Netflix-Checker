@@ -118,10 +118,18 @@ def main():
                             if still_on_login and error_msgs:
                                 print(f"{RED} Invalid Account", end='')
                             elif not still_on_login:
-                                print(f"{GREEN} Valid Account - Stored", end='')
-                                hits += 1
-                                with open('valid.txt', 'a') as valid:
-                                    valid.write("{}:{}\n".format(user[counter], passw[counter]))
+                                combo = "{}:{}".format(user[counter], passw[counter].strip())
+                                existing = set()
+                                if os.path.exists('valid.txt'):
+                                    with open('valid.txt', 'r') as f:
+                                        existing = {line.strip() for line in f}
+                                if combo not in existing:
+                                    print(f"{GREEN} Valid Account - Stored", end='')
+                                    hits += 1
+                                    with open('valid.txt', 'a') as valid:
+                                        valid.write(combo + "\n")
+                                else:
+                                    print(f"{YELLOW} Valid Account - Already Stored", end='')
                         except Exception:
                             request = requests.get(page)
                             if request.status_code == 403:
