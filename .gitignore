@@ -1,0 +1,23 @@
+# Combo lists and results
+netflix.txt
+valid.txt
+resume.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# ChromeDriver
+chromedriver
+chromedriver.exe
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

