@@ -3,7 +3,7 @@ import requests
 
 
 def find_IP():
-    page = "https://ip-api.com/json/"
+    page = "http://ip-api.com/json/"
     try:
         resp = requests.get(page, timeout=10)
         resp.raise_for_status()

